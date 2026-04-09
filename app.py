@@ -36,8 +36,8 @@ with gr.Blocks() as demo:
         with gr.Column():
             claim = gr.Textbox(label="Claim *", lines=3, value=DEFAULT_CLAIM)
             grounds = gr.Textbox(label="Grounds *", lines=5, value=DEFAULT_GROUNDS)
-            warrant = gr.Textbox(label="Warrant", lines=2)
-            backing = gr.Textbox(label="Backing", lines=2)
+            warrant = gr.Textbox(label="Warrant (Optional - Gauntlet will built this for you)", lines=2)
+            backing = gr.Textbox(label="Backing (Optional - Gauntlet will built this for you)", lines=2)
             submit_btn = gr.Button("Submit")
         with gr.Column():
             with gr.Row():
