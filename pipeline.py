@@ -1,8 +1,34 @@
+import os
+from concurrent.futures import ThreadPoolExecutor
+from openai import OpenAI
 from models import Argument
+from agents.constructor import agent as constructor
+
+
+def _contraclaim(claim: str) -> str:
+    client = OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=os.environ["OPENROUTER_API_KEY"],
+    )
+    response = client.chat.completions.create(
+        model=os.environ["OPENROUTER_LIGHT_MODEL"],
+        messages=[
+            {"role": "system", "content": "Return only the direct clinical opposite of the claim provided. One sentence, no explanation."},
+            {"role": "user", "content": claim},
+        ],
+    )
+    return response.choices[0].message.content.strip()
 
 
 def run_pipeline(argument: Argument) -> dict:
-    # TODO: Agent 1 - Researcher (OpenRouter LLM + Tavily web search)
-    # TODO: Agent 2 - Analyst
-    # TODO: Agent 3 - Synthesizer
-    return argument.model_dump()
+    contra_claim = _contraclaim(argument.claim)
+    contra_argument = Argument(claim=contra_claim, grounds=argument.grounds)
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        claim_future = pool.submit(constructor.run, argument)
+        contra_future = pool.submit(constructor.run, contra_argument)
+
+    return {
+        "claim": claim_future.result().model_dump(),
+        "contraclaim": contra_future.result().model_dump(),
+    }

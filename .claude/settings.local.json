@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv run:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:medium.com)",
+      "Bash(taskkill:*)",
+      "Bash(netstat -ano)",
+      "WebFetch(domain:arxiv.org)"
+    ]
+  }
+}

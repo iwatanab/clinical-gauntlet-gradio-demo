@@ -1,0 +1,5 @@
+temperature = 0.3
+
+[web_search]
+search_depth = "advanced"
+max_results = 5
