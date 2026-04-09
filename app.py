@@ -1,5 +1,8 @@
 import os
 import gradio as gr
+import uvicorn
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from models import Argument
 from pipeline import run_pipeline
@@ -32,7 +35,7 @@ def submit(claim: str, grounds: str, warrant: str, backing: str) -> tuple[dict, 
     return result["claim"], result["contraclaim"]
 
 
-with gr.Blocks() as demo:
+with gr.Blocks(theme=gr.themes.Default()) as demo:
     gr.Markdown("# Clinical Gauntlet — Educational Demo")
     with gr.Row():
         with gr.Column():
@@ -52,9 +55,13 @@ with gr.Blocks() as demo:
         outputs=[claim_output, contra_output],
     )
 
+app = FastAPI()
+
+@app.get("/health")
+def health():
+    return JSONResponse({"status": "ok"})
+
+app = gr.mount_gradio_app(app, demo, path="/")
+
 if __name__ == "__main__":
-    demo.launch(
-        server_name="0.0.0.0",
-        server_port=int(os.environ.get("PORT", 7860)),
-        theme=gr.themes.Default(),
-    )
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 7860)))
