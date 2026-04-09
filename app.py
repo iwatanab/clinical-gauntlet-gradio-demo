@@ -45,6 +45,9 @@ with gr.Blocks(theme=gr.themes.Default()) as demo:
             backing = gr.Textbox(label="Backing (Optional - Gauntlet will build this for you)", lines=2)
             submit_btn = gr.Button("Submit", variant="primary")
         with gr.Column():
+            gr.Markdown(
+                "> *The contraclaim is as important as the claim. A strong argument is judged not just by how well it supports its own claim, but by how well it addresses the strongest plausible opposing conclusion.*"
+            )
             with gr.Row():
                 claim_output = gr.JSON(label="Claim Argument")
                 contra_output = gr.JSON(label="Contraclaim Argument")
