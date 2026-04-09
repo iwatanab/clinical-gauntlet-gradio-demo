@@ -31,14 +31,15 @@ def submit(claim: str, grounds: str, warrant: str, backing: str) -> tuple[dict, 
     return result["claim"], result["contraclaim"]
 
 
-with gr.Blocks() as demo:
+with gr.Blocks(theme=gr.themes.Default()) as demo:
+    gr.Markdown("# Clinical Gauntlet — Educational Demo")
     with gr.Row():
         with gr.Column():
             claim = gr.Textbox(label="Claim *", lines=3, value=DEFAULT_CLAIM)
             grounds = gr.Textbox(label="Grounds *", lines=5, value=DEFAULT_GROUNDS)
-            warrant = gr.Textbox(label="Warrant (Optional - Gauntlet will built this for you)", lines=2)
-            backing = gr.Textbox(label="Backing (Optional - Gauntlet will built this for you)", lines=2)
-            submit_btn = gr.Button("Submit")
+            warrant = gr.Textbox(label="Warrant (Optional - Gauntlet will build this for you)", lines=2)
+            backing = gr.Textbox(label="Backing (Optional - Gauntlet will build this for you)", lines=2)
+            submit_btn = gr.Button("Submit", variant="primary")
         with gr.Column():
             with gr.Row():
                 claim_output = gr.JSON(label="Claim Argument")
