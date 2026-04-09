@@ -14,7 +14,7 @@ DEFAULT_GROUNDS = (
     "76F. Diagnosed with non-valvular atrial fibrillation 3 weeks ago. "
     "CHA\u2082DS\u2082-VASc score 5 (age, sex, hypertension, diabetes, prior TIA). "
     "HAS-BLED score 4. GI bleed 8 weeks ago requiring 2-unit transfusion \u2014 "
-    "source identified and endoscopically treated; haemoglobin now stable at 11.8\u202fg/dL "
+    "source identified and endoscopically treated; hemoglobin now stable at 11.8\u202fg/dL "
     "with no recurrent bleeding. History of one prior GI bleed 3 years ago, managed conservatively. "
     "eGFR 58\u202fmL/min/1.73m\u00b2. Current medications: metformin, lisinopril, amlodipine. "
     "No prior anticoagulation. "
