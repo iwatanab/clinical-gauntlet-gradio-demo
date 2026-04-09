@@ -14,9 +14,9 @@ def _contraclaim(claim: str) -> str:
         model=os.environ["OPENROUTER_LIGHT_MODEL"],
         messages=[
             {"role": "system", "content": (
-                "Produce a one-sentence clinical recommendation that opposes the claim by negating its conclusion only, "
-                "leaving all stated patient facts, clinical context, and temporal framing unchanged. "
-                "No explanation."
+                "Negate the claim by toggling its polarity — positive to negative, negative to positive. Change nothing else. "
+                "e.g. 'should be initiated' → 'should not be initiated'; 'should not be withheld' → 'should be withheld'. "
+                "Return only the result. No explanation"
             )},
             {"role": "user", "content": claim},
         ],
