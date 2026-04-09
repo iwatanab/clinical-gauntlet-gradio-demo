@@ -37,6 +37,9 @@ def submit(claim: str, grounds: str, warrant: str, backing: str) -> tuple[dict, 
 
 with gr.Blocks(theme=gr.themes.Default()) as demo:
     gr.Markdown("# Clinical Gauntlet — Educational Demo")
+    gr.Markdown(
+        "> **Disclaimer:** This tool is for educational purposes only — outputs are AI-generated, may be inaccurate, and must not be used as a substitute for professional judgement in healthcare or any other domain."
+    )
     with gr.Row():
         with gr.Column():
             claim = gr.Textbox(label="Claim *", lines=3, value=DEFAULT_CLAIM)
