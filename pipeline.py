@@ -13,7 +13,11 @@ def _contraclaim(claim: str) -> str:
     response = client.chat.completions.create(
         model=os.environ["OPENROUTER_LIGHT_MODEL"],
         messages=[
-            {"role": "system", "content": "Return only the direct clinical opposite of the claim provided. One sentence, no explanation."},
+            {"role": "system", "content": (
+                "Produce a one-sentence clinical recommendation that opposes the claim by negating its conclusion only, "
+                "leaving all stated patient facts, clinical context, and temporal framing unchanged. "
+                "No explanation."
+            )},
             {"role": "user", "content": claim},
         ],
     )
