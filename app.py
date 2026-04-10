@@ -9,7 +9,7 @@ from pipeline import run_pipeline
 
 load_dotenv()
 
-DEFAULT_CLAIM = "Anticoagulation should be initiated in this patient despite her recent gastrointestinal bleed."
+DEFAULT_CLAIM = "Anticoagulation should be initiated in this patient."
 DEFAULT_GOAL = "Prevent thromboembolic stroke."
 DEFAULT_GROUNDS = (
     "76F. Diagnosed with non-valvular atrial fibrillation 3 weeks ago. "
