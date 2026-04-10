@@ -21,7 +21,7 @@ def run(argument: Argument) -> Argument:
 
     messages = [
         {"role": "system", "content": PROMPT},
-        {"role": "user", "content": f"Claim: {argument.claim}\n\nGrounds: {argument.grounds}"},
+        {"role": "user", "content": f"Claim: {argument.claim}\n\nGoal: {argument.goal}\n\nPatient Facts: {argument.patient_facts}"},
     ]
 
     while True:
@@ -48,7 +48,8 @@ def run(argument: Argument) -> Argument:
     result = json.loads(msg.content)
     return Argument(
         claim=argument.claim,
-        grounds=argument.grounds,
+        goal=argument.goal,
+        patient_facts=argument.patient_facts,
         warrant=result["warrant"],
         backing=result["backing"],
     )

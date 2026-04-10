@@ -26,7 +26,7 @@ def _contraclaim(claim: str) -> str:
 
 def run_pipeline(argument: Argument) -> dict:
     contra_claim = _contraclaim(argument.claim)
-    contra_argument = Argument(claim=contra_claim, grounds=argument.grounds)
+    contra_argument = Argument(claim=contra_claim, goal=argument.goal, patient_facts=argument.patient_facts)
 
     with ThreadPoolExecutor(max_workers=2) as pool:
         claim_future = pool.submit(constructor.run, argument)

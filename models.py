@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 class Argument(BaseModel):
     claim: str
-    grounds: str
+    goal: str
+    patient_facts: str
     warrant: Optional[str] = None
     backing: Optional[str] = None

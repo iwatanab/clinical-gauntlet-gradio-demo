@@ -10,6 +10,7 @@ from pipeline import run_pipeline
 load_dotenv()
 
 DEFAULT_CLAIM = "Anticoagulation should be initiated in this patient despite her recent gastrointestinal bleed."
+DEFAULT_GOAL = "Prevent thromboembolic stroke."
 DEFAULT_GROUNDS = (
     "76F. Diagnosed with non-valvular atrial fibrillation 3 weeks ago. "
     "CHA\u2082DS\u2082-VASc score 5 (age, sex, hypertension, diabetes, prior TIA). "
@@ -22,12 +23,13 @@ DEFAULT_GROUNDS = (
 )
 
 
-def submit(claim: str, grounds: str, warrant: str, backing: str) -> tuple[dict, dict]:
-    if not claim.strip() or not grounds.strip():
-        raise gr.Error("Claim and Grounds are required.")
+def submit(claim: str, goal: str, patient_facts: str, warrant: str, backing: str) -> tuple[dict, dict]:
+    if not claim.strip() or not goal.strip() or not patient_facts.strip():
+        raise gr.Error("Claim, Goal, and Patient Facts are required.")
     argument = Argument(
         claim=claim,
-        grounds=grounds,
+        goal=goal,
+        patient_facts=patient_facts,
         warrant=warrant if warrant.strip() else None,
         backing=backing if backing.strip() else None,
     )
@@ -43,7 +45,8 @@ with gr.Blocks(theme=gr.themes.Default()) as demo:
     with gr.Row():
         with gr.Column():
             claim = gr.Textbox(label="Claim *", lines=3, value=DEFAULT_CLAIM)
-            grounds = gr.Textbox(label="Grounds *", lines=5, value=DEFAULT_GROUNDS)
+            goal = gr.Textbox(label="Goal *", lines=2, value=DEFAULT_GOAL)
+            patient_facts = gr.Textbox(label="Patient Facts *", lines=5, value=DEFAULT_GROUNDS)
             warrant = gr.Textbox(label="Warrant (Optional - Gauntlet will build this for you)", lines=2)
             backing = gr.Textbox(label="Backing (Optional - Gauntlet will build this for you)", lines=2)
             submit_btn = gr.Button("Submit", variant="primary")
@@ -57,7 +60,7 @@ with gr.Blocks(theme=gr.themes.Default()) as demo:
 
     submit_btn.click(
         fn=submit,
-        inputs=[claim, grounds, warrant, backing],
+        inputs=[claim, goal, patient_facts, warrant, backing],
         outputs=[claim_output, contra_output],
     )
 
