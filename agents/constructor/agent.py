@@ -6,7 +6,7 @@ from pathlib import Path
 from openai import OpenAI
 
 import tools.web_search as web_search
-from models import Argument
+from models import Argument, Citation
 
 _dir = Path(__file__).parent
 PROMPT = (_dir / "prompt.md").read_text()
@@ -46,10 +46,12 @@ def run(argument: Argument) -> Argument:
             messages.append({"role": "tool", "tool_call_id": call.id, "content": result})
 
     result = json.loads(msg.content)
+    citations = [Citation(**c) for c in result.get("citations", [])]
     return Argument(
         claim=argument.claim,
         goal=argument.goal,
         patient_facts=argument.patient_facts,
         warrant=result["warrant"],
         backing=result["backing"],
+        citations=citations,
     )

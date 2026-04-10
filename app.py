@@ -6,24 +6,12 @@ from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from models import Argument
 from pipeline import run_pipeline
+from examples.af_ich import CLAIM as DEFAULT_CLAIM, GOAL as DEFAULT_GOAL, PATIENT_FACTS as DEFAULT_PATIENT_FACTS
 
 load_dotenv()
 
-DEFAULT_CLAIM = "Anticoagulation should be initiated in this patient."
-DEFAULT_GOAL = "Prevent thromboembolic stroke."
-DEFAULT_GROUNDS = (
-    "76F. Diagnosed with non-valvular atrial fibrillation 3 weeks ago. "
-    "CHA\u2082DS\u2082-VASc score 5 (age, sex, hypertension, diabetes, prior TIA). "
-    "HAS-BLED score 4. GI bleed 8 weeks ago requiring 2-unit transfusion \u2014 "
-    "source identified and endoscopically treated; hemoglobin now stable at 11.8\u202fg/dL "
-    "with no recurrent bleeding. History of one prior GI bleed 3 years ago, managed conservatively. "
-    "eGFR 58\u202fmL/min/1.73m\u00b2. Current medications: metformin, lisinopril, amlodipine. "
-    "No prior anticoagulation. "
-    "Cardiologist recommending DOAC initiation; gastroenterologist advising 3-month deferral."
-)
 
-
-def submit(claim: str, goal: str, patient_facts: str, warrant: str, backing: str) -> tuple[dict, str]:
+def submit(claim: str, goal: str, patient_facts: str, warrant: str, backing: str) -> tuple[dict, str, list]:
     if not claim.strip() or not goal.strip() or not patient_facts.strip():
         raise gr.Error("Claim, Goal, and Patient Facts are required.")
     argument = Argument(
@@ -34,7 +22,7 @@ def submit(claim: str, goal: str, patient_facts: str, warrant: str, backing: str
         backing=backing if backing.strip() else None,
     )
     result = run_pipeline(argument)
-    return result["tree"], result["recommendation"]
+    return result["tree"], result["recommendation"], result["references"]
 
 
 with gr.Blocks(theme=gr.themes.Default()) as demo:
@@ -47,18 +35,19 @@ with gr.Blocks(theme=gr.themes.Default()) as demo:
             with gr.Group():
                 claim = gr.Textbox(label="Claim *", lines=3, value=DEFAULT_CLAIM)
                 goal = gr.Textbox(label="Goal *", lines=2, value=DEFAULT_GOAL)
-                patient_facts = gr.Textbox(label="Patient Facts * ('Grounds' in Argumentation Theory)", lines=5, value=DEFAULT_GROUNDS)
+                patient_facts = gr.Textbox(label="Patient Facts * ('Grounds' in Argumentation Theory)", lines=5, value=DEFAULT_PATIENT_FACTS)
                 warrant = gr.Textbox(label="Warrant (Optional - Gauntlet will build this for you)", lines=2)
                 backing = gr.Textbox(label="Backing (Optional - Gauntlet will build this for you)", lines=2)
         with gr.Column(scale=2):
             submit_btn = gr.Button("Submit", variant="primary")
             recommendation_output = gr.Textbox(label="Recommendation", lines=6, interactive=False)
+            references_output = gr.JSON(label="References")
             tree_output = gr.JSON(label="Argument Tree")
 
     submit_btn.click(
         fn=submit,
         inputs=[claim, goal, patient_facts, warrant, backing],
-        outputs=[tree_output, recommendation_output],
+        outputs=[tree_output, recommendation_output, references_output],
     )
 
 app = FastAPI()

@@ -2,12 +2,20 @@ from typing import Optional
 from pydantic import BaseModel
 
 
+class Citation(BaseModel):
+    source: str   # e.g. "ACC/AHA Atrial Fibrillation Guidelines 2023"
+    url: str
+    year: Optional[str] = None
+    finding: str  # the specific recommendation or finding used
+
+
 class Argument(BaseModel):
     claim: str
     goal: str
     patient_facts: str
     warrant: Optional[str] = None
     backing: Optional[str] = None
+    citations: list[Citation] = []
 
 
 class ArgumentNode(BaseModel):

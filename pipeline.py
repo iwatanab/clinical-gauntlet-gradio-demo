@@ -54,16 +54,16 @@ def _build_pair(arg: Argument, rival_arg: Optional[Argument], depth: int) -> Arg
     if active_nodes:
         # Step 3: Questioner (parallel)
         with ThreadPoolExecutor(max_workers=len(active_nodes)) as pool:
-            q_futures = {n: pool.submit(questioner.run, n) for n in active_nodes}
-        for n, fut in q_futures.items():
+            q_futures = [pool.submit(questioner.run, n) for n in active_nodes]
+        for n, fut in zip(active_nodes, q_futures):
             n.candidate_claims = fut.result()
 
         # Step 4: Appraiser (parallel)
         with ThreadPoolExecutor(max_workers=len(active_nodes)) as pool:
-            ap_futures = {n: pool.submit(appraiser.run, n) for n in active_nodes}
+            ap_futures = [pool.submit(appraiser.run, n) for n in active_nodes]
 
         # Step 5: Recurse for each spawned child
-        for n, fut in ap_futures.items():
+        for n, fut in zip(active_nodes, ap_futures):
             decisions = fut.result()
             for d in decisions:
                 if d["spawn"] == "skip":
@@ -96,5 +96,9 @@ def run_pipeline(argument: Argument) -> dict:
         patient_facts=argument.patient_facts,
     )
     root_pair = _build_pair(argument, rival_arg, depth=0)
-    recommendation = resolver.run(root_pair)
-    return {"tree": root_pair.model_dump(), "recommendation": recommendation}
+    resolution = resolver.run(root_pair)
+    return {
+        "tree": root_pair.model_dump(),
+        "recommendation": resolution["recommendation"],
+        "references": resolution["references"],
+    }

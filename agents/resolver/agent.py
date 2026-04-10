@@ -12,7 +12,7 @@ PROMPT = (_dir / "prompt.md").read_text()
 CONFIG = tomllib.loads((_dir / "config.toml").read_text())
 
 
-def run(pair: ArgumentPair) -> str:
+def run(pair: ArgumentPair) -> dict:
     client = OpenAI(
         base_url="https://openrouter.ai/api/v1",
         api_key=os.environ["OPENROUTER_API_KEY"],
@@ -28,4 +28,7 @@ def run(pair: ArgumentPair) -> str:
         response_format={"type": "json_object"},
     )
     result = json.loads(response.choices[0].message.content)
-    return result["recommendation"]
+    return {
+        "recommendation": result["recommendation"],
+        "references": result.get("references", []),
+    }
