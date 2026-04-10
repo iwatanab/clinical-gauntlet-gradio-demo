@@ -23,7 +23,7 @@ DEFAULT_GROUNDS = (
 )
 
 
-def submit(claim: str, goal: str, patient_facts: str, warrant: str, backing: str) -> tuple[dict, dict]:
+def submit(claim: str, goal: str, patient_facts: str, warrant: str, backing: str) -> tuple[dict, str]:
     if not claim.strip() or not goal.strip() or not patient_facts.strip():
         raise gr.Error("Claim, Goal, and Patient Facts are required.")
     argument = Argument(
@@ -34,7 +34,7 @@ def submit(claim: str, goal: str, patient_facts: str, warrant: str, backing: str
         backing=backing if backing.strip() else None,
     )
     result = run_pipeline(argument)
-    return result["claim"], result["contraclaim"]
+    return result["tree"], result["recommendation"]
 
 
 with gr.Blocks(theme=gr.themes.Default()) as demo:
@@ -43,25 +43,22 @@ with gr.Blocks(theme=gr.themes.Default()) as demo:
         "> **Disclaimer:** This tool is for educational purposes only — outputs are AI-generated, may be inaccurate, and must not be used as a substitute for professional judgement in healthcare or any other domain."
     )
     with gr.Row():
-        with gr.Column():
-            claim = gr.Textbox(label="Claim *", lines=3, value=DEFAULT_CLAIM)
-            goal = gr.Textbox(label="Goal *", lines=2, value=DEFAULT_GOAL)
-            patient_facts = gr.Textbox(label="Patient Facts * ('Grounds' in Argumentation Theory)", lines=5, value=DEFAULT_GROUNDS)
-            warrant = gr.Textbox(label="Warrant (Optional - Gauntlet will build this for you)", lines=2)
-            backing = gr.Textbox(label="Backing (Optional - Gauntlet will build this for you)", lines=2)
+        with gr.Column(scale=1):
+            with gr.Group():
+                claim = gr.Textbox(label="Claim *", lines=3, value=DEFAULT_CLAIM)
+                goal = gr.Textbox(label="Goal *", lines=2, value=DEFAULT_GOAL)
+                patient_facts = gr.Textbox(label="Patient Facts * ('Grounds' in Argumentation Theory)", lines=5, value=DEFAULT_GROUNDS)
+                warrant = gr.Textbox(label="Warrant (Optional - Gauntlet will build this for you)", lines=2)
+                backing = gr.Textbox(label="Backing (Optional - Gauntlet will build this for you)", lines=2)
+        with gr.Column(scale=2):
             submit_btn = gr.Button("Submit", variant="primary")
-        with gr.Column():
-            gr.Markdown(
-                "> *The contraclaim is as important as the claim. A strong argument is judged not just by how well it supports its own claim, but by how well it addresses the strongest plausible opposing conclusion.*"
-            )
-            with gr.Row():
-                claim_output = gr.JSON(label="Claim Argument")
-                contra_output = gr.JSON(label="Contraclaim Argument")
+            recommendation_output = gr.Textbox(label="Recommendation", lines=6, interactive=False)
+            tree_output = gr.JSON(label="Argument Tree")
 
     submit_btn.click(
         fn=submit,
         inputs=[claim, goal, patient_facts, warrant, backing],
-        outputs=[claim_output, contra_output],
+        outputs=[tree_output, recommendation_output],
     )
 
 app = FastAPI()
