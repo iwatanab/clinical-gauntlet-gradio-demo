@@ -46,7 +46,7 @@ with gr.Blocks(theme=gr.themes.Default()) as demo:
         with gr.Column():
             claim = gr.Textbox(label="Claim *", lines=3, value=DEFAULT_CLAIM)
             goal = gr.Textbox(label="Goal *", lines=2, value=DEFAULT_GOAL)
-            patient_facts = gr.Textbox(label="Patient Facts *", lines=5, value=DEFAULT_GROUNDS)
+            patient_facts = gr.Textbox(label="Patient Facts * ('Grounds' in Argumentation Theory)", lines=5, value=DEFAULT_GROUNDS)
             warrant = gr.Textbox(label="Warrant (Optional - Gauntlet will build this for you)", lines=2)
             backing = gr.Textbox(label="Backing (Optional - Gauntlet will build this for you)", lines=2)
             submit_btn = gr.Button("Submit", variant="primary")

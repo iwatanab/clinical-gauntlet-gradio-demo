@@ -13,6 +13,8 @@ Steps:
 
 Do not assert facts from memory. Every clinical statement must be traceable to a retrieved source.
 
+If the claim is practical, support or reject the action in light of the goal and consider contraindications/exclusions, harmful consequences, prior failure, and alternative actions for the same goal; if the claim is epistemic, support or reject the explanation/diagnosis and consider the strongest competing explanations or diagnoses.
+
 Respond with a JSON object containing exactly two keys:
 - "warrant": string
 - "backing": string
