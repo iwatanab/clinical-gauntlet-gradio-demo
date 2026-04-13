@@ -6,23 +6,23 @@ from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from models import Argument
 from pipeline import run_pipeline
-from examples.af_ich import CLAIM as DEFAULT_CLAIM, GOAL as DEFAULT_GOAL, PATIENT_FACTS as DEFAULT_PATIENT_FACTS
+from examples.af_ich import CLAIM as DEFAULT_CLAIM, GOAL as DEFAULT_GOAL, GROUNDS as DEFAULT_GROUNDS
 
 load_dotenv()
 
 
-def submit(claim: str, goal: str, patient_facts: str, warrant: str, backing: str) -> tuple[dict, str, list]:
-    if not claim.strip() or not goal.strip() or not patient_facts.strip():
-        raise gr.Error("Claim, Goal, and Patient Facts are required.")
+def submit(claim: str, goal: str, grounds: str, warrant: str, backing: str) -> tuple[str, str, str, list, dict]:
+    if not claim.strip() or not goal.strip() or not grounds.strip():
+        raise gr.Error("Claim, Goal, and Grounds are required.")
     argument = Argument(
         claim=claim,
         goal=goal,
-        patient_facts=patient_facts,
+        grounds=grounds,
         warrant=warrant if warrant.strip() else None,
         backing=backing if backing.strip() else None,
     )
     result = run_pipeline(argument)
-    return result["tree"], result["recommendation"], result["references"]
+    return result["verdict"], result["justification"], result["recommendation"], result["references"], result["tree"]
 
 
 with gr.Blocks(theme=gr.themes.Default()) as demo:
@@ -33,21 +33,37 @@ with gr.Blocks(theme=gr.themes.Default()) as demo:
     with gr.Row():
         with gr.Column(scale=1):
             with gr.Group():
-                claim = gr.Textbox(label="Claim *", lines=3, value=DEFAULT_CLAIM)
-                goal = gr.Textbox(label="Goal *", lines=2, value=DEFAULT_GOAL)
-                patient_facts = gr.Textbox(label="Patient Facts * ('Grounds' in Argumentation Theory)", lines=5, value=DEFAULT_PATIENT_FACTS)
-                warrant = gr.Textbox(label="Warrant (Optional - Gauntlet will build this for you)", lines=2)
-                backing = gr.Textbox(label="Backing (Optional - Gauntlet will build this for you)", lines=2)
+                claim = gr.Textbox(label="Claim *", lines=3, value=DEFAULT_CLAIM,
+                    info="The specific action or decision being argued for. "
+                         "Like a verdict: narrow, falsifiable, one thing. "
+                         "e.g. 'This patient should receive a blood thinner.'")
+                goal = gr.Textbox(label="Goal *", lines=2, value=DEFAULT_GOAL,
+                    info="The outcome you are trying to achieve — the 'why bother' behind the claim. "
+                         "Like a judge asking 'what are you trying to accomplish?' "
+                         "e.g. 'Prevent a stroke.'")
+                grounds = gr.Textbox(label="Grounds *", lines=5, value=DEFAULT_GROUNDS,
+                    info="The specific facts of this case from which the claim is drawn, independent of whether the warrant is accepted — "
+                         "e.g. irregular heartbeat, prior stroke, clotting risk score of 6.")
+                warrant = gr.Textbox(label="Warrant (Optional)", lines=2,
+                    info="A general authorisation that bridges patient facts to claim — "
+                         "e.g. 'Patients with an irregular heartbeat and a clotting risk score ≥2 should receive a blood thinner.' "
+                         "Gauntlet will derive this from guidelines if left blank.")
+                backing = gr.Textbox(label="Backing (Optional)", lines=2,
+                    info="The body of established evidence that certifies the warrant is sound — "
+                         "e.g. ACC/AHA atrial fibrillation guidelines, ARISTOTLE trial. "
+                         "Gauntlet will retrieve this from authoritative sources if left blank.")
         with gr.Column(scale=2):
             submit_btn = gr.Button("Submit", variant="primary")
+            verdict_output = gr.Textbox(label="Verdict", lines=1, interactive=False)
+            justification_output = gr.Textbox(label="Justification", lines=4, interactive=False)
             recommendation_output = gr.Textbox(label="Recommendation", lines=6, interactive=False)
             references_output = gr.JSON(label="References")
             tree_output = gr.JSON(label="Argument Tree")
 
     submit_btn.click(
         fn=submit,
-        inputs=[claim, goal, patient_facts, warrant, backing],
-        outputs=[tree_output, recommendation_output, references_output],
+        inputs=[claim, goal, grounds, warrant, backing],
+        outputs=[verdict_output, justification_output, recommendation_output, references_output, tree_output],
     )
 
 app = FastAPI()

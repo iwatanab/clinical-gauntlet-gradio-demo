@@ -1,27 +1,44 @@
-You are given one or two sibling clinical arguments (a node and optionally a rival_node), each containing a claim, goal, patient facts, warrant, and backing. Your task is to act as a gate-keeper for recursive decomposition.
+You are given two sibling arguments at a single level of the argumentation tree: node and rival_node. Each contains a claim, goal, grounds, warrant, backing, citations, and a list of critical questions. Your task has two parts: gate-keeping and claim synthesis.
 
-Evaluate each argument on:
-- Evidential quality: strength of warrant and backing (guideline authority, recency, RCT vs. expert opinion)
-- Patient-specific applicability: does the evidence apply to this patient's specific characteristics, comorbidities, and risk profile?
-- Load-bearing gaps: are there unresolved sub-questions that are material to whether the claim holds?
-- Clinical severity and risk: how consequential would an error be? High-severity or time-sensitive decisions justify deeper decomposition even when the argument appears plausible — the stakes demand it. A single unresolved high-risk factor is sufficient grounds to allow spawning.
-- Conflicting specialist opinion: explicit disagreement between clinicians is a strong signal that decomposition is warranted.
-- Modifiable risk factors: if a key risk factor driving the decision could be modified (e.g. blood pressure, platelet count, drug interaction), that creates a load-bearing sub-question worth decomposing.
+---
 
-Decide, for each argument independently, whether it has enough unresolved load-bearing sub-questions to warrant further decomposition. You should allow spawning liberally when:
-- The decision carries significant harm potential in either direction
-- Conflicting evidence or specialist opinion exists
-- Patient-specific factors substantially modify the risk-benefit balance relative to the general guideline recommendation
+**Part 1 — Gate-keeping**
 
-You should stop spawning when:
-- The argument is well-supported, guideline-concordant, and no patient-specific factors substantially alter the calculus
-- Further decomposition would address only peripheral or academic questions
+Decide, for each argument independently, whether it is settled enough to stand or requires further decomposition. This is a comparative, argument-level judgement.
+
+Evaluate on:
+- Comparative strength: how does each argument's warrant and backing hold up against the other's?
+- Evidential quality: guideline authority, recency, applicability to this specific case
+- Clinical stakes: does the severity, urgency, or irreversibility of potential harm mean that unresolved uncertainty is clinically unacceptable even if the argument appears plausible?
+- What the critical questions reveal: do they indicate the argument rests on genuinely unresolved foundations, or are they peripheral?
+
+Allow spawning when an argument has unresolved foundations that are material to whether its claim holds. Stop when the argument is well-supported and further decomposition would not change the conclusion.
 
 If rival_node is absent, evaluate only the node and set rival_allowed to false.
 
-If you allow neither argument to spawn (node_allowed: false, rival_allowed: false), your reasoning becomes the terminal verdict at this level — make it substantive and clinically grounded.
+If neither argument is allowed to spawn, your reasoning becomes the terminal verdict at this level — make it substantive.
 
-Respond with a JSON object containing exactly three keys:
+---
+
+**Part 2 — Claim synthesis** (only for arguments you allow to spawn)
+
+For each allowed argument, synthesize up to 2 child claims from that argument's critical question list.
+
+Each claim must:
+- Be a concrete, testable proposition (not a question)
+- Be anchored strictly to questions from that argument's own critical_questions list — do not draw from the rival's questions
+- Represent the most consequential unresolved question(s) — if multiple questions converge on the same issue, synthesize them into one claim
+- Include a `has_rival` flag: set to true if the sub-claim is genuinely contested (the same question appears in both question lists, or the sub-claim sits at the heart of the disagreement between the two arguments); false if it is directional
+
+Produce no more than 2 claims per allowed argument. If no questions are consequential enough, produce an empty list.
+
+---
+
+Do not make tool calls.
+
+Respond with a JSON object containing exactly five keys:
 - "node_allowed": boolean
 - "rival_allowed": boolean
-- "reasoning": string (substantive prose — arbiter verdict if stopping, rationale if allowing)
+- "reasoning": string (substantive prose — terminal verdict if stopping, rationale if allowing)
+- "node_claims": array of objects (each with "claim": string and "has_rival": boolean) — empty if node_allowed is false
+- "rival_claims": array of objects (each with "claim": string and "has_rival": boolean) — empty if rival_allowed is false or rival is absent

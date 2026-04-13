@@ -21,7 +21,7 @@ def run(argument: Argument) -> Argument:
 
     messages = [
         {"role": "system", "content": PROMPT},
-        {"role": "user", "content": f"Claim: {argument.claim}\n\nGoal: {argument.goal}\n\nPatient Facts: {argument.patient_facts}"},
+        {"role": "user", "content": f"Claim: {argument.claim}\n\nGoal: {argument.goal}\n\nGrounds: {argument.grounds}"},
     ]
 
     while True:
@@ -50,7 +50,7 @@ def run(argument: Argument) -> Argument:
     return Argument(
         claim=argument.claim,
         goal=argument.goal,
-        patient_facts=argument.patient_facts,
+        grounds=argument.grounds,
         warrant=result["warrant"],
         backing=result["backing"],
         citations=citations,

@@ -23,9 +23,9 @@ def run(node: ArgumentNode) -> list[str]:
         temperature=CONFIG["temperature"],
         messages=[
             {"role": "system", "content": PROMPT},
-            {"role": "user", "content": node.model_dump_json()},
+            {"role": "user", "content": node.argument.model_dump_json()},
         ],
         response_format={"type": "json_object"},
     )
     result = json.loads(response.choices[0].message.content)
-    return result["candidate_claims"]
+    return result["critical_questions"]

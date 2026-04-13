@@ -29,6 +29,8 @@ def run(pair: ArgumentPair) -> dict:
     )
     result = json.loads(response.choices[0].message.content)
     return {
+        "verdict": result["verdict"],
+        "justification": result["justification"],
         "recommendation": result["recommendation"],
         "references": result.get("references", []),
     }

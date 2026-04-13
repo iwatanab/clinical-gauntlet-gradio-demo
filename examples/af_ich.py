@@ -2,7 +2,7 @@ CLAIM = "Anticoagulation should be resumed in this patient."
 
 GOAL = "Prevent recurrent thromboembolic stroke."
 
-PATIENT_FACTS = (
+GROUNDS = (
     "71M. Non-valvular atrial fibrillation; on apixaban 5\u202fmg BD for 3 years prior to admission. "
     "Spontaneous left thalamic intracerebral haemorrhage (ICH) 10 weeks ago. MRI susceptibility-weighted "
     "imaging shows >6 cortical microhaemorrhages, radiologically consistent with cerebral amyloid angiopathy (CAA) "
