@@ -14,8 +14,8 @@ from tree_renderer import update_pairs, render_tree_html
 from examples.af_ich import CLAIM as DEFAULT_CLAIM, GOAL as DEFAULT_GOAL, GROUNDS as DEFAULT_GROUNDS
 
 
-_BTN_RUNNING = gr.update(value="⟳ Running…", interactive=False)
-_BTN_READY   = gr.update(value="Run Gauntlet", interactive=True)
+_BTN_RUNNING = gr.update(interactive=False, value="Running\u2026")
+_BTN_READY   = gr.update(interactive=True,  value="Run Gauntlet")
 
 
 def submit(claim: str, goal: str, grounds: str, warrant: str, backing: str):
@@ -216,6 +216,80 @@ _MODAL_JS = """
          + '</div>';
   }
 })();
+
+/* ── Run timer ── */
+(function () {
+  var _timerInt = null, _startMs = null, _timerEl = null, _running = false;
+
+  function _wrap() { return document.getElementById('gauntlet-submit-btn'); }
+  function _btn()  { var w = _wrap(); return w ? w.querySelector('button') : null; }
+
+  function _pad(n, w) {
+    var s = String(n);
+    while (s.length < w) s = ' ' + s;
+    return s;
+  }
+  function _fmt(ms) {
+    var m = Math.floor(ms / 60000);
+    var s = Math.floor((ms % 60000) / 1000);
+    var r = ms % 1000;
+    return (m > 0 ? m + 'm ' : '') + _pad(s, 2) + 's ' + _pad(r, 3) + 'ms';
+  }
+
+  function _ensureTimer() {
+    if (_timerEl && _timerEl.isConnected) return _timerEl;
+    var w = _wrap(); if (!w) return null;
+    /* Absolutely positioned inside the button wrapper — no extra flow space */
+    w.style.position = 'relative';
+    w.style.overflow  = 'visible';
+    _timerEl = document.createElement('div');
+    _timerEl.style.cssText = 'position:absolute;bottom:-14px;right:2px;'
+      + 'font-size:10px;color:#64748b;line-height:1;'
+      + 'font-family:monospace;white-space:pre;'
+      + 'pointer-events:none;display:none;z-index:10;';
+    w.appendChild(_timerEl);
+    return _timerEl;
+  }
+
+  function _startTimer(el) {
+    _startMs = Date.now();
+    el.style.display = 'block';
+    el.textContent = _fmt(0);
+    _timerInt = setInterval(function () {
+      el.textContent = _fmt(Date.now() - _startMs);
+    }, 100);
+  }
+
+  function _finish(el) {
+    _running = false;
+    if (_timerInt) { clearInterval(_timerInt); _timerInt = null; }
+    if (el && _startMs !== null)
+      el.textContent = 'Completed in ' + _fmt(Date.now() - _startMs);
+  }
+
+  document.addEventListener('click', function (e) {
+    var w = _wrap();
+    if (!w || !w.contains(e.target) || _running) return;
+    _running = true;
+
+    var el = _ensureTimer();
+    if (el) _startTimer(el);
+
+    /* Stop when Gradio writes "Run Gauntlet" back (final yield — same yield as verdict).
+       Observe the wrapper, not the button: Gradio may replace the <button> element
+       entirely on update, which would orphan an observer attached to the old node. */
+    var obs = new MutationObserver(function () {
+      var cur = _btn();
+      if (!cur) return;
+      var t = cur.querySelector('span') || cur;
+      if (t.textContent.trim() === 'Run Gauntlet') {
+        obs.disconnect();
+        _finish(el);
+      }
+    });
+    obs.observe(w, { childList: true, subtree: true, characterData: true });
+  });
+})();
 """
 
 
@@ -278,7 +352,7 @@ Once the full tree is complete, the **Resolver** surveys the entire structure an
                          "Gauntlet will retrieve this from authoritative sources if left blank.")
 
         with gr.Column(scale=3):
-            submit_btn = gr.Button("Run Gauntlet", variant="primary")
+            submit_btn = gr.Button("Run Gauntlet", variant="primary", elem_id="gauntlet-submit-btn")
             tree_output = gr.HTML(label="Argument Tree")
             verdict_output = gr.Textbox(label="Verdict", interactive=False)
             justification_output = gr.Textbox(label="Justification", lines=4, interactive=False)
