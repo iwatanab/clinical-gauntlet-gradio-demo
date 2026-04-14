@@ -7,7 +7,7 @@ from pathlib import Path
 from openai import OpenAI
 
 import tools.web_search as web_search
-from log_config import short
+from log_config import short, parse_json
 from models import Argument, Citation
 
 logger = logging.getLogger(__name__)
@@ -61,7 +61,7 @@ def run(argument: Argument) -> Argument:
             messages.append({"role": "tool", "tool_call_id": call.id, "content": result})
 
     try:
-        result = json.loads(msg.content)
+        result = parse_json(msg.content)
     except Exception:
         logger.exception("Constructor — JSON parse failed | raw: %s", short(str(msg.content), 200))
         raise

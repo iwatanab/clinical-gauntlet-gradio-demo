@@ -1,6 +1,7 @@
 import os
 import queue
 import threading
+import uuid
 from dotenv import load_dotenv
 load_dotenv()  # must run before pipeline import — MAX_DEPTH is read at pipeline module level
 
@@ -18,8 +19,12 @@ _BTN_RUNNING = gr.update(interactive=False, value="Running\u2026")
 _BTN_READY   = gr.update(interactive=True,  value="Run Gauntlet")
 
 
+def _timer_signal_html(run_id: str, phase: str) -> str:
+    return f'<div data-run-id="{run_id}" data-phase="{phase}"></div>'
+
+
 def submit(claim: str, goal: str, grounds: str, warrant: str, backing: str):
-    # yields: (tree_html, verdict, justification, recommendation, references, btn)
+    # yields: (tree_html, verdict, justification, recommendation, references, btn, timer_signal)
     if not claim.strip() or not goal.strip() or not grounds.strip():
         raise gr.Error("Claim, Goal, and Grounds are required.")
 
@@ -35,6 +40,7 @@ def submit(claim: str, goal: str, grounds: str, warrant: str, backing: str):
     pairs: dict = {}
     result_holder: dict = {}
     error_holder: list = [None]
+    run_id = uuid.uuid4().hex
 
     def run():
         try:
@@ -47,19 +53,36 @@ def submit(claim: str, goal: str, grounds: str, warrant: str, backing: str):
     threading.Thread(target=run, daemon=True).start()
 
     # Initial yield — disable button, show placeholder
-    yield render_tree_html(pairs), "", "", "", [], _BTN_RUNNING
+    yield render_tree_html(pairs), "", "", "", [], _BTN_RUNNING, _timer_signal_html(run_id, "running")
 
     while True:
         evt = event_queue.get()
         if evt["type"] == "_done":
             break
         if evt["type"] == "pipeline_complete":
-            yield render_tree_html(pairs, verdict=evt["data"]["verdict"]), "", "", "", [], gr.update()
+            yield (
+                render_tree_html(pairs, verdict=evt["data"]["verdict"]),
+                "",
+                "",
+                "",
+                [],
+                gr.update(),
+                _timer_signal_html(run_id, "complete"),
+            )
         else:
             update_pairs(pairs, evt)
-            yield render_tree_html(pairs), "", "", "", [], gr.update()
+            yield render_tree_html(pairs), "", "", "", [], gr.update(), gr.skip()
 
     if error_holder[0] is not None:
+        yield (
+            gr.skip(),
+            gr.skip(),
+            gr.skip(),
+            gr.skip(),
+            gr.skip(),
+            _BTN_READY,
+            _timer_signal_html(run_id, "error"),
+        )
         raise gr.Error(f"Pipeline error: {error_holder[0]}")
 
     # Final yield — re-enable button, populate all text outputs
@@ -70,6 +93,7 @@ def submit(claim: str, goal: str, grounds: str, warrant: str, backing: str):
         result_holder.get("recommendation", ""),
         result_holder.get("references", []),
         _BTN_READY,
+        gr.skip(),
     )
 
 
@@ -219,10 +243,11 @@ _MODAL_JS = """
 
 /* ── Run timer ── */
 (function () {
-  var _timerInt = null, _startMs = null, _timerEl = null, _running = false;
+  var _timerInt = null, _startMs = null, _timerEl = null;
+  var _activeRunId = null, _lastSignalKey = null, _signalObs = null;
 
   function _wrap() { return document.getElementById('gauntlet-submit-btn'); }
-  function _btn()  { var w = _wrap(); return w ? w.querySelector('button') : null; }
+  function _signalHost() { return document.getElementById('gauntlet-timer-signal'); }
 
   function _pad(n, w) {
     var s = String(n);
@@ -251,7 +276,13 @@ _MODAL_JS = """
     return _timerEl;
   }
 
-  function _startTimer(el) {
+  function _clearTimer() {
+    if (_timerInt) { clearInterval(_timerInt); _timerInt = null; }
+  }
+
+  function _startTimer(runId, el) {
+    _clearTimer();
+    _activeRunId = runId;
     _startMs = Date.now();
     el.style.display = 'block';
     el.textContent = _fmt(0);
@@ -260,38 +291,65 @@ _MODAL_JS = """
     }, 100);
   }
 
-  function _finish(el) {
-    _running = false;
-    if (_timerInt) { clearInterval(_timerInt); _timerInt = null; }
+  function _finish(el, prefix) {
+    _clearTimer();
     if (el && _startMs !== null)
-      el.textContent = 'Completed in ' + _fmt(Date.now() - _startMs);
+      el.textContent = prefix + _fmt(Date.now() - _startMs);
+    _activeRunId = null;
   }
 
-  document.addEventListener('click', function (e) {
-    var w = _wrap();
-    if (!w || !w.contains(e.target) || _running) return;
-    _running = true;
+  function _readSignalNode() {
+    var host = _signalHost();
+    return host ? host.querySelector('[data-run-id][data-phase]') : null;
+  }
+
+  function _handleSignal() {
+    var signal = _readSignalNode();
+    if (!signal) return;
+
+    var runId = signal.getAttribute('data-run-id');
+    var phase = signal.getAttribute('data-phase');
+    if (!runId || !phase) return;
+
+    var signalKey = runId + ':' + phase;
+    if (signalKey === _lastSignalKey) return;
+    _lastSignalKey = signalKey;
 
     var el = _ensureTimer();
-    if (el) _startTimer(el);
+    if (!el) return;
 
-    /* Poll the button's disabled state — more reliable than MutationObserver in
-       Gradio's React DOM where the <button> element may be replaced entirely.
-       Phase 1: wait for button to become disabled (first yield sets interactive=False).
-       Phase 2: wait for button to become enabled again (final yield sets interactive=True). */
-    var phase = 'wait_disabled';
-    var watchdog = setInterval(function () {
-      var cur = _btn();
-      if (!cur) return;
-      var off = cur.disabled || cur.getAttribute('aria-disabled') === 'true';
-      if (phase === 'wait_disabled' && off) {
-        phase = 'wait_enabled';
-      } else if (phase === 'wait_enabled' && !off) {
-        clearInterval(watchdog);
-        _finish(el);
-      }
-    }, 300);
-  });
+    if (phase === 'running') {
+      _startTimer(runId, el);
+      return;
+    }
+
+    if (runId !== _activeRunId) return;
+
+    if (phase === 'complete') {
+      _finish(el, 'Completed in ');
+    } else if (phase === 'error') {
+      _finish(el, 'Failed after ');
+    }
+  }
+
+  function _bindSignalObserver() {
+    if (_signalObs) return;
+    var host = _signalHost();
+    if (!host) {
+      window.setTimeout(_bindSignalObserver, 100);
+      return;
+    }
+
+    _signalObs = new MutationObserver(_handleSignal);
+    _signalObs.observe(host, { childList: true, subtree: true, attributes: true });
+    _handleSignal();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _bindSignalObserver);
+  } else {
+    _bindSignalObserver();
+  }
 })();
 """
 
@@ -356,17 +414,18 @@ Once the full tree is complete, the **Resolver** surveys the entire structure an
 
         with gr.Column(scale=3):
             submit_btn = gr.Button("Run Gauntlet", variant="primary", elem_id="gauntlet-submit-btn")
-            tree_output = gr.HTML(label="Argument Tree")
+            tree_output = gr.HTML(label="Argument Tree", elem_id="gauntlet-tree-output")
             verdict_output = gr.Textbox(label="Verdict", interactive=False)
             justification_output = gr.Textbox(label="Justification", lines=4, interactive=False)
             recommendation_output = gr.Textbox(label="Recommendation", lines=6, interactive=False)
             references_output = gr.JSON(label="References")
+            timer_signal = gr.HTML(value="", visible=False, elem_id="gauntlet-timer-signal")
 
     submit_btn.click(
         fn=submit,
         inputs=[claim, goal, grounds, warrant, backing],
         outputs=[tree_output, verdict_output, justification_output,
-                 recommendation_output, references_output, submit_btn],
+                 recommendation_output, references_output, submit_btn, timer_signal],
     )
 
 demo.queue()

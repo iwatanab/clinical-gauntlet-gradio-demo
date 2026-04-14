@@ -6,7 +6,7 @@ from pathlib import Path
 
 from openai import OpenAI
 
-from log_config import short
+from log_config import short, parse_json
 from models import ArgumentPair
 
 logger = logging.getLogger(__name__)
@@ -38,7 +38,7 @@ def run(pair: ArgumentPair) -> dict:
         raise
 
     try:
-        result = json.loads(response.choices[0].message.content)
+        result = parse_json(response.choices[0].message.content)
     except Exception:
         logger.exception("Resolver — JSON parse failed | raw: %s",
                          short(str(response.choices[0].message.content), 200))
