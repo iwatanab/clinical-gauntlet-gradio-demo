@@ -275,19 +275,22 @@ _MODAL_JS = """
     var el = _ensureTimer();
     if (el) _startTimer(el);
 
-    /* Stop when Gradio writes "Run Gauntlet" back (final yield — same yield as verdict).
-       Observe the wrapper, not the button: Gradio may replace the <button> element
-       entirely on update, which would orphan an observer attached to the old node. */
-    var obs = new MutationObserver(function () {
+    /* Poll the button's disabled state — more reliable than MutationObserver in
+       Gradio's React DOM where the <button> element may be replaced entirely.
+       Phase 1: wait for button to become disabled (first yield sets interactive=False).
+       Phase 2: wait for button to become enabled again (final yield sets interactive=True). */
+    var phase = 'wait_disabled';
+    var watchdog = setInterval(function () {
       var cur = _btn();
       if (!cur) return;
-      var t = cur.querySelector('span') || cur;
-      if (t.textContent.trim() === 'Run Gauntlet') {
-        obs.disconnect();
+      var off = cur.disabled || cur.getAttribute('aria-disabled') === 'true';
+      if (phase === 'wait_disabled' && off) {
+        phase = 'wait_enabled';
+      } else if (phase === 'wait_enabled' && !off) {
+        clearInterval(watchdog);
         _finish(el);
       }
-    });
-    obs.observe(w, { childList: true, subtree: true, characterData: true });
+    }, 300);
   });
 })();
 """
