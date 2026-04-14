@@ -17,7 +17,7 @@ SCHEMA = {
 }
 
 
-def execute(query: str, search_depth: str = "advanced", max_results: int = 5) -> str:
+def execute(query: str, search_depth: str = "advanced", max_results: int = 3) -> str:
     results = TavilyClient(api_key=os.environ["TAVILY_API_KEY"]).search(
         query=query, search_depth=search_depth, max_results=max_results
     )
