@@ -36,7 +36,7 @@ def run(argument: Argument) -> Argument:
         model=os.environ["OPENROUTER_MODEL"],
         temperature=CONFIG["temperature"],
         model_kwargs={"response_format": {"type": "json_object"}},
-    ).bind_tools([search_web])
+    ).bind_tools([search_web], strict=False)
 
     messages = [
         SystemMessage(content=PROMPT),
