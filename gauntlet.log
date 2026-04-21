@@ -1,49 +1,93 @@
-11:33:10 DEBUG    PIL.Image                           Importing AvifImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing BlpImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing BmpImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing BufrStubImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing CurImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing DcxImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing DdsImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing EpsImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing FitsImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing FliImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing FpxImagePlugin
-11:33:10 DEBUG    PIL.Image                           Image: failed to import FpxImagePlugin: No module named 'olefile'
-11:33:10 DEBUG    PIL.Image                           Importing FtexImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing GbrImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing GifImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing GribStubImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing Hdf5StubImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing IcnsImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing IcoImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing ImImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing ImtImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing IptcImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing JpegImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing Jpeg2KImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing McIdasImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing MicImagePlugin
-11:33:10 DEBUG    PIL.Image                           Image: failed to import MicImagePlugin: No module named 'olefile'
-11:33:10 DEBUG    PIL.Image                           Importing MpegImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing MpoImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing MspImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing PalmImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing PcdImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing PcxImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing PdfImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing PixarImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing PngImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing PpmImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing PsdImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing QoiImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing SgiImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing SpiderImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing SunImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing TgaImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing TiffImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing WebPImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing WmfImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing XbmImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing XpmImagePlugin
-11:33:10 DEBUG    PIL.Image                           Importing XVThumbImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing AvifImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing BlpImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing BmpImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing BufrStubImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing CurImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing DcxImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing DdsImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing EpsImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing FitsImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing FliImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing FpxImagePlugin
+10:23:53 DEBUG    PIL.Image                           Image: failed to import FpxImagePlugin: No module named 'olefile'
+10:23:53 DEBUG    PIL.Image                           Importing FtexImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing GbrImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing GifImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing GribStubImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing Hdf5StubImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing IcnsImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing IcoImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing ImImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing ImtImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing IptcImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing JpegImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing Jpeg2KImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing McIdasImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing MicImagePlugin
+10:23:53 DEBUG    PIL.Image                           Image: failed to import MicImagePlugin: No module named 'olefile'
+10:23:53 DEBUG    PIL.Image                           Importing MpegImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing MpoImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing MspImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing PalmImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing PcdImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing PcxImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing PdfImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing PixarImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing PngImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing PpmImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing PsdImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing QoiImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing SgiImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing SpiderImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing SunImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing TgaImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing TiffImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing WebPImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing WmfImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing XbmImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing XpmImagePlugin
+10:23:53 DEBUG    PIL.Image                           Importing XVThumbImagePlugin
+10:23:56 DEBUG    asyncio                             Using proactor: IocpProactor
+10:23:56 DEBUG    asyncio                             Using proactor: IocpProactor
+10:23:56 DEBUG    asyncio                             Using proactor: IocpProactor
+10:23:56 DEBUG    asyncio                             Using proactor: IocpProactor
+10:23:56 DEBUG    httpcore.connection                 connect_tcp.started host='api.gradio.app' port=443 local_address=None timeout=3 socket_options=None
+10:23:56 DEBUG    httpcore.connection                 connect_tcp.started host='huggingface.co' port=443 local_address=None timeout=None socket_options=None
+10:23:56 DEBUG    httpcore.connection                 connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x0000025D3B9C7770>
+10:23:56 DEBUG    httpcore.connection                 start_tls.started ssl_context=<ssl.SSLContext object at 0x0000025D3B8E9AE0> server_hostname='huggingface.co' timeout=None
+10:23:56 DEBUG    httpcore.connection                 start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x0000025D3BAD87D0>
+10:23:56 DEBUG    httpcore.http11                     send_request_headers.started request=<Request [b'HEAD']>
+10:23:56 DEBUG    httpcore.http11                     send_request_headers.complete
+10:23:56 DEBUG    httpcore.http11                     send_request_body.started request=<Request [b'HEAD']>
+10:23:56 DEBUG    httpcore.http11                     send_request_body.complete
+10:23:56 DEBUG    httpcore.http11                     receive_response_headers.started request=<Request [b'HEAD']>
+10:23:56 DEBUG    asyncio                             Using proactor: IocpProactor
+10:23:56 DEBUG    asyncio                             Using proactor: IocpProactor
+10:23:56 DEBUG    httpcore.http11                     receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'text/plain; charset=utf-8'), (b'Content-Length', b'2'), (b'Connection', b'keep-alive'), (b'Date', b'Tue, 21 Apr 2026 15:23:56 GMT'), (b'ETag', b'W/"2-nOO9QiTIwXgNtWtBJezz8kv3SLc"'), (b'X-Powered-By', b'huggingface-moon'), (b'X-Request-Id', b'Root=1-69e7968c-22414fba740ef535329e9427;e7cb43d6-3840-4163-b698-517b323e62fc'), (b'RateLimit', b'"api";r=9999;t=116'), (b'RateLimit-Policy', b'"fixed window";"api";q=10000;w=300'), (b'cross-origin-opener-policy', b'same-origin'), (b'Referrer-Policy', b'strict-origin-when-cross-origin'), (b'Access-Control-Max-Age', b'86400'), (b'Access-Control-Allow-Origin', b'https://huggingface.co'), (b'Vary', b'Origin'), (b'Access-Control-Expose-Headers', b'X-Repo-Commit,X-Request-Id,X-Error-Code,X-Error-Message,X-Total-Count,ETag,Link,Accept-Ranges,Content-Range,X-Linked-Size,X-Linked-ETag,X-Xet-Hash'), (b'X-Cache', b'Miss from cloudfront'), (b'Via', b'1.1 a832a4b62a3204613d34ee439d43821e.cloudfront.net (CloudFront)'), (b'X-Amz-Cf-Pop', b'MSP50-P1'), (b'X-Amz-Cf-Id', b'0YAMG5krKp0Gic0rPR2z7iWnm_HAPtodYFVE3tOtKH58lWyvblYzGQ==')])
+10:23:56 INFO     httpx                               HTTP Request: HEAD https://huggingface.co/api/telemetry/https%3A/api.gradio.app/gradio-initiated-analytics "HTTP/1.1 200 OK"
+10:23:56 DEBUG    httpcore.http11                     receive_response_body.started request=<Request [b'HEAD']>
+10:23:56 DEBUG    httpcore.http11                     receive_response_body.complete
+10:23:56 DEBUG    httpcore.http11                     response_closed.started
+10:23:56 DEBUG    httpcore.http11                     response_closed.complete
+10:23:56 DEBUG    httpcore.connection                 connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x0000025D3B812350>
+10:23:56 DEBUG    httpcore.connection                 start_tls.started ssl_context=<ssl.SSLContext object at 0x0000025D2E73A8F0> server_hostname='api.gradio.app' timeout=3
+10:23:56 DEBUG    asyncio                             Using proactor: IocpProactor
+10:23:56 DEBUG    asyncio                             Using proactor: IocpProactor
+10:23:56 DEBUG    asyncio                             Using proactor: IocpProactor
+10:23:56 DEBUG    asyncio                             Using proactor: IocpProactor
+10:23:56 DEBUG    httpcore.connection                 start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x0000025D3B92A190>
+10:23:56 DEBUG    httpcore.http11                     send_request_headers.started request=<Request [b'GET']>
+10:23:56 DEBUG    httpcore.http11                     send_request_headers.complete
+10:23:56 DEBUG    httpcore.http11                     send_request_body.started request=<Request [b'GET']>
+10:23:56 DEBUG    httpcore.http11                     send_request_body.complete
+10:23:56 DEBUG    httpcore.http11                     receive_response_headers.started request=<Request [b'GET']>
+10:23:56 DEBUG    asyncio                             Using proactor: IocpProactor
+10:23:56 DEBUG    asyncio                             Using proactor: IocpProactor
+10:23:56 DEBUG    httpcore.http11                     receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Tue, 21 Apr 2026 15:23:56 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'21'), (b'Connection', b'keep-alive'), (b'Server', b'nginx/1.18.0'), (b'Access-Control-Allow-Origin', b'*')])
+10:23:56 INFO     httpx                               HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+10:23:56 DEBUG    httpcore.http11                     receive_response_body.started request=<Request [b'GET']>
+10:23:56 DEBUG    httpcore.http11                     receive_response_body.complete
+10:23:56 DEBUG    httpcore.http11                     response_closed.started
+10:23:56 DEBUG    httpcore.http11                     response_closed.complete
+10:23:56 DEBUG    httpcore.connection                 close.started
+10:23:56 DEBUG    httpcore.connection                 close.complete
