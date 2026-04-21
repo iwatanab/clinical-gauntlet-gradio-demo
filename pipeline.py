@@ -3,25 +3,17 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
-from langchain_openai import ChatOpenAI
-from langchain_core.messages import SystemMessage, HumanMessage
-
 from log_config import short
 from models import Argument, ArgumentNode, ArgumentPair
 from agents.constructor import agent as constructor
 from agents.arbiter import agent as arbiter
+from agents.inverter import agent as inverter
 from agents.questioner import agent as questioner
 from agents.resolver import agent as resolver
 
 logger = logging.getLogger(__name__)
 
 MAX_DEPTH = int(os.environ.get("MAX_DEPTH", 2))
-
-_RIVAL_SYSTEM_PROMPT = (
-    "Negate the claim by toggling its polarity — positive to negative, negative to positive. "
-    "Change nothing else. e.g. 'should be initiated' → 'should not be initiated'; "
-    "'should not be withheld' → 'should be withheld'. Return only the result. No explanation"
-)
 
 
 def _spawn_pair(claim: str, has_rival: bool, goal: str, grounds: str, depth: int,
@@ -31,24 +23,8 @@ def _spawn_pair(claim: str, has_rival: bool, goal: str, grounds: str, depth: int
     child_rival_arg = None
     if has_rival:
         logger.debug("_spawn_pair | generating rival for: %s", short(claim))
-        child_rival_arg = Argument(claim=_rival_claim(claim), goal=goal, grounds=grounds)
+        child_rival_arg = Argument(claim=inverter.run(claim), goal=goal, grounds=grounds)
     return _build_pair(child_arg, child_rival_arg, depth, path=path, on_event=on_event)
-
-
-def _rival_claim(claim: str) -> str:
-    logger.debug("rival_claim | input: %s", short(claim))
-    llm = ChatOpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key=os.environ["OPENROUTER_API_KEY"],
-        model=os.environ["OPENROUTER_LIGHT_MODEL"],
-    )
-    response = llm.invoke([
-        SystemMessage(content=_RIVAL_SYSTEM_PROMPT),
-        HumanMessage(content=claim),
-    ])
-    result = response.content.strip()
-    logger.debug("rival_claim | output: %s", short(result))
-    return result
 
 
 def _build_pair(arg: Argument, rival_arg: Optional[Argument], depth: int,
@@ -192,7 +168,7 @@ def run_pipeline(argument: Argument, *, on_event=None) -> dict:
     try:
         logger.info("Generating root rival claim")
         rival_arg = Argument(
-            claim=_rival_claim(argument.claim),
+            claim=inverter.run(argument.claim),
             goal=argument.goal,
             grounds=argument.grounds,
         )
