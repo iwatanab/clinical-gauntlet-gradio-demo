@@ -8,6 +8,7 @@ from langchain_core.messages import SystemMessage, HumanMessage, ToolMessage
 from langchain_core.tools import tool as lc_tool
 
 import tools.web_search as web_search
+from langsmith import traceable
 from log_config import short, parse_json
 from models import Argument
 from schemas import ConstructorOutput
@@ -25,6 +26,7 @@ def search_web(query: str) -> str:
     return web_search.execute(query=query, **CONFIG["web_search"])
 
 
+@traceable
 def run(argument: Argument) -> Argument:
     logger.debug("Constructor start | claim: %s", short(argument.claim))
 

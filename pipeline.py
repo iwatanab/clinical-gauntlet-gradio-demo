@@ -3,6 +3,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
+from langsmith import traceable
 from log_config import short
 from models import Argument, ArgumentNode, ArgumentPair
 from agents.constructor import agent as constructor
@@ -16,6 +17,7 @@ logger = logging.getLogger(__name__)
 MAX_DEPTH = int(os.environ.get("MAX_DEPTH", 2))
 
 
+@traceable
 def _spawn_pair(claim: str, has_rival: bool, goal: str, grounds: str, depth: int,
                 *, path: str, on_event=None) -> ArgumentPair:
     """Build a child ArgumentPair, generating the rival claim inside the thread if needed."""
@@ -27,6 +29,7 @@ def _spawn_pair(claim: str, has_rival: bool, goal: str, grounds: str, depth: int
     return _build_pair(child_arg, child_rival_arg, depth, path=path, on_event=on_event)
 
 
+@traceable
 def _build_pair(arg: Argument, rival_arg: Optional[Argument], depth: int,
                 *, path: str = "root", on_event=None) -> ArgumentPair:
     tag = f"[depth={depth}]"
@@ -158,6 +161,7 @@ def _build_pair(arg: Argument, rival_arg: Optional[Argument], depth: int,
     )
 
 
+@traceable(name="pipeline")
 def run_pipeline(argument: Argument, *, on_event=None) -> dict:
     logger.info("══════════════════════════════════════════")
     logger.info("Pipeline start | MAX_DEPTH=%d", MAX_DEPTH)

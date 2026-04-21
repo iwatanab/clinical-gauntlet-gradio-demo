@@ -6,6 +6,7 @@ from pathlib import Path
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 
+from langsmith import traceable
 from log_config import short
 from models import Argument
 from schemas import QuestionerOutput
@@ -17,6 +18,7 @@ PROMPT = (_dir / "prompt.md").read_text()
 CONFIG = tomllib.loads((_dir / "config.toml").read_text())
 
 
+@traceable
 def run(argument: Argument) -> list[str]:
     logger.debug("Questioner start | claim: %s", short(argument.claim))
 

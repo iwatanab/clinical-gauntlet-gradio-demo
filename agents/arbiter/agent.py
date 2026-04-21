@@ -8,6 +8,7 @@ from typing import Optional
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 
+from langsmith import traceable
 from log_config import short
 from models import ArgumentNode, ArbiterNodeInput
 from schemas import ArbiterOutput
@@ -19,6 +20,7 @@ PROMPT = (_dir / "prompt.md").read_text()
 CONFIG = tomllib.loads((_dir / "config.toml").read_text())
 
 
+@traceable
 def run(node: ArgumentNode, rival_node: Optional[ArgumentNode]) -> ArbiterOutput:
     logger.debug("Arbiter start | node: %s | rival: %s",
                  short(node.argument.claim),

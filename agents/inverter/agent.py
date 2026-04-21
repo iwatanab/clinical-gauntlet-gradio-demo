@@ -6,6 +6,7 @@ from pathlib import Path
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 
+from langsmith import traceable
 from log_config import short
 
 logger = logging.getLogger(__name__)
@@ -15,6 +16,7 @@ PROMPT = (_dir / "prompt.md").read_text()
 CONFIG = tomllib.loads((_dir / "config.toml").read_text())
 
 
+@traceable
 def run(claim: str) -> str:
     logger.debug("Inverter start | claim: %s", short(claim))
     llm = ChatOpenAI(
